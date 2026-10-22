@@ -1,1 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crug Online | Moda y accesorios</title>
+<style>
+:root{--bg:#f7f5f0;--dark:#171717;--gold:#c8a66b;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--dark);font-family:Arial,sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+header{background:#171717;color:white;padding:20px 6%;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:900;letter-spacing:2px}
+.logo span{color:var(--gold)}
+.btn{padding:12px 17px;border:0;border-radius:6px;font-weight:bold}
+.gold{background:var(--gold);color:#171717}
+.outline{background:transparent;color:white;border:1px solid #888}
+.hero{padding:65px 7%;background:linear-gradient(110deg,#171717,#393127);color:white}
+.hero small{color:var(--gold);letter-spacing:4px}
+.hero h1{font-size:clamp(40px,7vw,68px);margin:18px 0}
+.hero p{line-height:1.7;color:#ddd;max-width:500px}
+main{max-width:1150px;margin:auto;padding:38px 5%}
+.heading{text-align:center;margin-bottom:28px}
+.heading p{color:#777}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px}
+.product{background:white;border:1px solid #e5e0d6;border-radius:10px;overflow:hidden}
+.art{height:170px;background:#eee8dc;display:grid;place-items:center;font-size:65px}
+.info{padding:17px}
+.info h3{margin-top:0}
+.info .btn{width:100%}
+.account{max-width:460px;margin:40px auto;background:white;border:1px solid #e5e0d6;border-radius:10px;padding:24px}
+.account input{width:100%;padding:13px;margin:7px 0 15px;border:1px solid #ccc;border-radius:6px}
+.account .gold{width:100%}
+.switch{display:block;margin:14px auto 0;border:0;background:none;text-decoration:underline}
+#status{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.hidden{display:none!important}
+.notice{background:#eee8dc;padding:13px;border-radius:7px;line-height:1.5}
+footer{background:#171717;color:white;text-align:center;padding:28px;line-height:1.8}
+@media(max-width:480px){header{padding:17px 5%}.logo{font-size:21px}.hero{padding:48px 6%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">CRUG <span>ONLINE</span></div>
+  <div>
+    <button class="btn outline" id="accountBtn">Mi cuenta</button>
+    <button class="btn gold hidden" id="logoutBtn">Cerrar sesión</button>
+  </div>
+</header>
 
+<section class="hero">
+  <small>ACCESORIOS · MODA · ESTILO</small>
+  <h1>Tu estilo.<br>Tu identidad.</h1>
+  <p>Descubrí accesorios para completar tu look. Encontrá tu próximo favorito en Crug Online.</p>
+  <button class="btn gold" id="catalogBtn">VER COLECCIÓN</button>
+</section>
+
+<main>
+<section id="catalog">
+  <div class="heading">
+    <h2>Nuestra colección</h2>
+    <p>Detalles que hacen la diferencia.</p>
+  </div>
+  <div class="products">
+    <article class="product">
+      <div class="art">⌚</div>
+      <div class="info"><h3>Relojes</h3><p>Estilo para cada ocasión.</p><p><b>Consultar precio</b></p><button class="btn gold order" data-product="Relojes">Consultar</button></div>
+    </article>
+    <article class="product">
+      <div class="art">🕶️</div>
+      <div class="info"><h3>Anteojos</h3><p>Un toque diferente.</p><p><b>Consultar precio</b></p><button class="btn gold order" data-product="Anteojos">Consultar</button></div>
+    </article>
+    <article class="product">
+      <div class="art">📿</div>
+      <div class="info"><h3>Cadenas y pulseras</h3><p>Combiná con tu estilo.</p><p><b>Consultar precio</b></p><button class="btn gold order" data-product="Cadenas y pulseras">Consultar</button></div>
+    </article>
+    <article class="product">
+      <div class="art">🧢</div>
+      <div class="info"><h3>Gorras</h3><p>El complemento ideal.</p><p><b>Consultar precio</b></p><button class="btn gold order" data-product="Gorras">Consultar</button></div>
+    </article>
+  </div>
+  <p class="notice">Productos de ejemplo: más adelante agregaremos tus fotos, precios y artículos reales.</p>
+</section>
+
+<section class="account" id="account">
+  <h2 id="formTitle">Ingresá a tu cuenta</h2>
+  <p id="description">Iniciá sesión o creá tu cuenta en Crug Online.</p>
+  <form id="authForm">
+    <label for="email">Correo electrónico</label>
+    <input id="email" type="email" autocomplete="email" placeholder="tu@email.com" required>
+    <label for="password">Contraseña (mínimo 6 caracteres)</label>
+    <input id="password" type="password" minlength="6" autocomplete="current-password" required>
+    <button class="btn gold" id="submitBtn" type="submit">Iniciar sesión</button>
+  </form>
+  <button class="switch" id="switchBtn" type="button">¿No tenés cuenta? Registrate</button>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div id="userPanel" class="hidden"><p id="welcome"></p></div>
+</section>
+</main>
+
+<footer><b>CRUG ONLINE</b><br>Accesorios y moda para tu estilo.<br>© <span id="year"></span> Crug Online</footer>
+
+<script type="module">
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL="https://mstojvhdbfjqrqrfatydp.supabase.co";
+const SUPABASE_KEY="sb_publishable_sShpKULzay8WbGY30g7JRQ_bNCiHYg8";
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+let registering=false;
+
+$("year").textContent=new Date().getFullYear();
+
+function status(message,error=false){
+  $("status").textContent=message;
+  $("status").style.color=error?"#b42318":"#267344";
+}
+function mode(register){
+  registering=register;
+  $("formTitle").textContent=register?"Crear una cuenta":"Ingresá a tu cuenta";
+  $("description").textContent=register?"Registrate para formar parte de Crug Online.":"Iniciá sesión con tu correo y contraseña.";
+  $("submitBtn").textContent=register?"Crear cuenta":"Iniciar sesión";
+  $("switchBtn").textContent=register?"¿Ya tenés cuenta? Iniciá sesión":"¿No tenés cuenta? Registrate";
+  $("password").autocomplete=register?"new-password":"current-password";
+  status("");
+}
+function displayUser(user){
+  const logged=Boolean(user);
+  $("logoutBtn").classList.toggle("hidden",!logged);
+  $("accountBtn").textContent=logged?"Mi perfil":"Mi cuenta";
+  $("authForm").classList.toggle("hidden",logged);
+  $("switchBtn").classList.toggle("hidden",logged);
+  $("userPanel").classList.toggle("hidden",!logged);
+  if(logged){
+    $("welcome").textContent="¡Bienvenido a Crug Online! Sesión iniciada con "+user.email;
+  }
+}
+$("switchBtn").addEventListener("click",()=>mode(!registering));
+$("accountBtn").addEventListener("click",()=>$("account").scrollIntoView({behavior:"smooth"}));
+$("catalogBtn").addEventListener("click",()=>$("catalog").scrollIntoView({behavior:"smooth"}));
+
+$("authForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const email=$("email").value.trim();
+  const password=$("password").value;
+  $("submitBtn").disabled=true;
+  status(registering?"Creando cuenta...":"Ingresando...");
+  try{
+    if(registering){
+      const {data,error}=await supabase.auth.signUp({email,password});
+      if(error)throw error;
+      if(data.session){
+        displayUser(data.user);
+        status("¡Cuenta creada correctamente!");
+      }else{
+        status("Revisá tu correo para confirmar el registro y después iniciá sesión.");
+      }
+    }else{
+      const {data,error}=await supabase.auth.signInWithPassword({email,password});
+      if(error)throw error;
+      displayUser(data.user);
+      status("¡Sesión iniciada correctamente!");
+    }
+  }catch(err){
+    status(err.message||"No se pudo completar la operación.",true);
+  }finally{
+    $("submitBtn").disabled=false;
+  }
+});
+
+$("logoutBtn").addEventListener("click",async()=>{
+  const {error}=await supabase.auth.signOut();
+  if(error){status(error.message,true);return;}
+  displayUser(null);
+  mode(false);
+  status("Cerraste sesión correctamente.");
+});
+
+document.querySelectorAll(".order").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const message="Hola, quiero consultar por "+btn.dataset.product+" de Crug Online.";
+    window.open("https://wa.me/?text="+encodeURIComponent(message),"_blank","noopener,noreferrer");
+  });
+});
+
+supabase.auth.onAuthStateChange((_event,session)=>{
+  displayUser(session?.user??null);
+});
+
+try{
+  const {data,error}=await supabase.auth.getSession();
+  if(error)throw error;
+  displayUser(data.session?.user??null);
+}catch(err){
+  status("No se pudo conectar con Supabase. Revisá la URL y la clave pública.",true);
+}
+</script>
+</body>
+</html>
